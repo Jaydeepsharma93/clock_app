@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const Clock());
@@ -21,14 +22,12 @@ class _ClockState extends State<Clock> {
       initialRoute: '/',
       routes: {
         '/': (context) => Clock_app(),
-        '/stoper': (context) => Stoper()
+        '/stoper': (context) => Stoper(),
+         '/timer': (context) => Timer_s(),
       },
     );
   }
 }
-
-
-
 
 class Clock_app extends StatefulWidget {
   const Clock_app({super.key});
@@ -47,6 +46,7 @@ class _Clock_appState extends State<Clock_app> {
         dateTime = DateTime.now();
       });
     });
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -57,10 +57,20 @@ class _Clock_appState extends State<Clock_app> {
             children: [
               Column(
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "${(dateTime.hour % 12).toString().padLeft(2, '0')} : ${dateTime.minute.toString().padLeft(2, '0')} ",
+                        style: const TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.bold),
+                      ),
+                      Text(dateTime.hour < 12 ? 'AM' : 'PM')
+                    ],
+                  ),
                   Text(
-                    "${dateTime.hour % 12} : ${dateTime.minute}",
-                    style: const TextStyle(
-                        fontSize: 40, fontWeight: FontWeight.bold),
+                    '${DateFormat('EEEE, MMM,').format(dateTime)} ${dateTime.day.toString().padLeft(2, '0')}',
+                    style: TextStyle(letterSpacing: 1),
                   ),
                 ],
               ),
@@ -85,19 +95,18 @@ class _Clock_appState extends State<Clock_app> {
                           alignment: Alignment.center,
                           height: 230,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white,width: 35),
-                              shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 35),
+                            shape: BoxShape.circle,
                             // boxShadow: [
                             //   BoxShadow(
-                              //       color: Colors.black12,
-                              //       spreadRadius: 5,
-                              //       blurRadius: 30)
-                              // ]
-                            ),
+                            //       color: Colors.black12,
+                            //       spreadRadius: 5,
+                            //       blurRadius: 30)
+                            // ]
+                          ),
                           child: Container(
                             height: 160,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle),
+                            decoration: BoxDecoration(shape: BoxShape.circle),
                           ),
                         ),
                         // ...List.generate(
@@ -112,10 +121,6 @@ class _Clock_appState extends State<Clock_app> {
                         //         : const VerticalDivider(thickness: 3, endIndent: 245),
                         //   ),
                         // ),
-                        const CircleAvatar(
-                          radius: 8,
-                          backgroundColor: Colors.black,
-                        ),
                         Transform.rotate(
                           angle: dateTime.second * 6 * pi / 180,
                           child: const VerticalDivider(
@@ -124,6 +129,10 @@ class _Clock_appState extends State<Clock_app> {
                             indent: 28,
                             endIndent: 120,
                           ),
+                        ),
+                        const CircleAvatar(
+                          radius: 8,
+                          backgroundColor: Colors.black,
                         ),
                         Transform.rotate(
                           angle: dateTime.minute * 6 * pi / 180,
@@ -154,22 +163,48 @@ class _Clock_appState extends State<Clock_app> {
                 children: [
                   Column(
                     children: [
-                      IconButton(onPressed: (){}, icon: Icon(Icons.access_time_outlined,size: 35,)),
-                      Text("clock",style:TextStyle(fontWeight: FontWeight.bold),)
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.access_time_outlined,
+                            size: 35,
+                          )),
+                      Text(
+                        "clock",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
                   Column(
                     children: [
-                      IconButton(onPressed: (){}, icon: Icon(Icons.timelapse_outlined,size: 35,)),
-                      Text("timer",style:TextStyle(fontWeight: FontWeight.bold),)
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/timer');
+                          },
+                          icon: Icon(
+                            Icons.timelapse_outlined,
+                            size: 35,
+                          )),
+                      Text(
+                        "timer",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
                   Column(
                     children: [
-                      IconButton(onPressed: (){
-                        Navigator.pushNamed(context, '/stoper');
-                      }, icon: Icon(Icons.timer_outlined,size: 35,)),
-                      Text("stoper",style:TextStyle(fontWeight: FontWeight.bold),)
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/stoper');
+                          },
+                          icon: Icon(
+                            Icons.timer_outlined,
+                            size: 35,
+                          )),
+                      Text(
+                        "stoper",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
                     ],
                   )
                 ],
@@ -181,6 +216,8 @@ class _Clock_appState extends State<Clock_app> {
     );
   }
 }
+
+
 
 
 
@@ -197,20 +234,165 @@ class _StoperState extends State<Stoper> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(),
-        body: Column(
-          children: [
-            Container(
-              child: Column(
-                children: [
-
-                ],
+          appBar: AppBar(),
+          body: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  child: Column(
+                    children: [],
+                  ),
+                ),
               ),
-            )
-          ],
-        )
-      ),
+              Container(
+                height: 120,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/');
+                            },
+                            icon: Icon(
+                              Icons.access_time_outlined,
+                              size: 35,
+                            )),
+                        Text(
+                          "clock",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/timer');
+                            },
+                            icon: Icon(
+                              Icons.timelapse_outlined,
+                              size: 35,
+                            )),
+                        Text(
+                          "timer",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/stoper');
+                            },
+                            icon: Icon(
+                              Icons.timer_outlined,
+                              size: 35,
+                            )),
+                        Text(
+                          "stoper",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          )),
     );
   }
 }
 
+
+
+
+
+
+
+class Timer_s extends StatefulWidget {
+  const Timer_s({super.key});
+
+  @override
+  State<Timer_s> createState() => _Timer_sState();
+}
+
+class _Timer_sState extends State<Timer_s> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+          appBar: AppBar(),
+          body: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  child: Column(
+                    children: [],
+                  ),
+                ),
+              ),
+              Container(
+                height: 120,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/');
+                            },
+                            icon: Icon(
+                              Icons.access_time_outlined,
+                              size: 35,
+                            )),
+                        Text(
+                          "clock",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/timer');
+                            },
+                            icon: Icon(
+                              Icons.timelapse_outlined,
+                              size: 35,
+                            )),
+                        Text(
+                          "timer",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/stoper');
+                            },
+                            icon: Icon(
+                              Icons.timer_outlined,
+                              size: 35,
+                            )),
+                        Text(
+                          "stoper",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          )),
+    );
+  }
+}
