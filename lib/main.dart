@@ -23,7 +23,7 @@ class _ClockState extends State<Clock> {
       routes: {
         '/': (context) => Clock_app(),
         '/stoper': (context) => Stoper(),
-         '/timer': (context) => Timer_s(),
+        '/timer': (context) => Timer_s(),
       },
     );
   }
@@ -217,10 +217,6 @@ class _Clock_appState extends State<Clock_app> {
   }
 }
 
-
-
-
-
 class Stoper extends StatefulWidget {
   const Stoper({super.key});
 
@@ -229,7 +225,17 @@ class Stoper extends StatefulWidget {
 }
 
 class _StoperState extends State<Stoper> {
+  Stopwatch stopwatch = Stopwatch();
+  late Timer timer;
+
   @override
+  void initState() {
+    super.initState();
+    timer =
+        Timer.periodic(const Duration(milliseconds: 30), _updateElapsedTime);
+    setState(() {});
+  }
+
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -240,7 +246,70 @@ class _StoperState extends State<Stoper> {
               Expanded(
                 child: Container(
                   child: Column(
-                    children: [],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        height: 320,
+                        width: 320,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                        ),
+                        child: Text(
+                          formatTime(stopwatch.elapsed),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(height: 40),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            )),
+                            onPressed: () {
+                              setState(() {
+                                if (stopwatch.isRunning) {
+                                  stopwatch.stop();
+                                } else {
+                                  stopwatch.start();
+                                }
+                              });
+                            },
+                            child: Text(
+                              stopwatch.isRunning ? 'Stop' : 'Start',
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            )),
+                            onPressed: () {
+                              setState(() {
+                                stopwatch.reset();
+                              });
+                            },
+                            child: const Text(
+                              'Reset',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -304,13 +373,21 @@ class _StoperState extends State<Stoper> {
           )),
     );
   }
+
+  void _updateElapsedTime(Timer timer) {
+    if (stopwatch.isRunning) {
+      setState(() {});
+    }
+  }
+
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String minutes = twoDigits(duration.inMinutes);
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    String milliseconds = twoDigits((duration.inMilliseconds % 1000) ~/ 10);
+    return '$minutes:$seconds.$milliseconds';
+  }
 }
-
-
-
-
-
-
 
 class Timer_s extends StatefulWidget {
   const Timer_s({super.key});
